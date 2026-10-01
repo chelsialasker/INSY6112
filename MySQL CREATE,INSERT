@@ -1,0 +1,114 @@
+ing MySQL, create a single Structured Query Language (SQL) script that answers all the questions 
+below. Include comments to indicate which part of the script answers which question.
+The script must execute correctly using MySQL in order to get full marks.
+Consider the following extract from an Entity Relationship Diagram (ERD) for lecturers that offer 
+individual tutorial sessions to students before answering Q.3.1 to Q.3.7:
+Q.3.1 Write an SQL statement to create the Student table. (5)
+Q.3.2 Write an SQL statement to create the Lecturer table. (4)
+Q.3.3 Write an SQL statement to create the Tutorial table. (9)
+Q.3.4 Write SQL statements to insert the following data:
+Table: Student
+Student ID Student Name Student Surname Student Number
+1 Debbie Theart 123456
+2 Thomas Duncan 654321
+(11)
+22; 23; 24; 25 2025
+© The Independent Institute of Education (Pty) Ltd 2025
+Page 6 of 7
+Table: Lecturer
+Lecturer ID Lecturer Name Lecturer Surname
+1 Zintle Nukani
+2 Ravi Maharaj
+Table: Tutorials
+Tutorial
+ID
+Tutorial Lecturer
+ID
+Student
+Date Time Duration ID
+1 2025-01-15 9:00 180 2 1
+2 2025-01-18 15:00 240 2 2
+3 2025-01-20 10:00 180 1 1
+4 2025-01-21 11:00 180 2 1
+Q.3.5 Write an SQL statement to display all scheduled tutorials between 2025-01-16 and 
+2025-01-20 (inclusive).
+(4)
+Q.3.6 Write an SQL statement to display the names and surnames of students, with the 
+total number of tutorials they have booked. Sort the results in descending order 
+based on the number of tutorials.
+(6)
+Q.3.7 Create a view that gets a list of all the students that have tutorials booked with the 
+lecturer with lecturer ID 2. Include just the name and surname of the students in the 
+result and sort the results in ascending alphabetical order by surname
+
+//ANSWERS
+-- Q.3.1
+CREATE TABLE Student (
+    StudentID INT PRIMARY KEY,
+    StudentName VARCHAR(50),
+    StudentSurname VARCHAR(50),
+    StudentNumber INT
+);
+
+-- Q.3.2
+CREATE TABLE Lecturer (
+    LecturerID INT PRIMARY KEY,
+    LecturerName VARCHAR(50),
+    LecturerSurname VARCHAR(50)
+);
+
+-- Q.3.3
+CREATE TABLE Tutorial (
+    TutorialID INT PRIMARY KEY,
+    StudentID INT,
+    LecturerID INT,
+    TutorialDate DATE,
+    TutorialTime TIME,
+    TutorialDuration INT,
+    FOREIGN KEY (StudentID) REFERENCES Student(StudentID),
+    FOREIGN KEY (LecturerID) REFERENCES Lecturer(LecturerID)
+);
+
+-- Q.3.4
+INSERT INTO Student (StudentID, StudentName, StudentSurname, StudentNumber)
+VALUES (1, 'Debbie', 'Theart', 123456);
+
+INSERT INTO Student (StudentID, StudentName, StudentSurname, StudentNumber)
+VALUES (2, 'Thomas', 'Duncan', 654321);
+
+INSERT INTO Lecturer (LecturerID, LecturerName, LecturerSurname)
+VALUES (1, 'Zintle', 'Nukani');
+
+INSERT INTO Lecturer (LecturerID, LecturerName, LecturerSurname)
+VALUES (2, 'Ravi', 'Maharaj');
+
+INSERT INTO Tutorial (TutorialID, TutorialDate, TutorialTime, TutorialDuration, LecturerID, StudentID)
+VALUES (1, '2025-01-15', '09:00:00', 180, 2, 1);
+
+INSERT INTO Tutorial (TutorialID, TutorialDate, TutorialTime, TutorialDuration, LecturerID, StudentID)
+VALUES (2, '2025-01-18', '15:00:00', 240, 2, 2);
+
+INSERT INTO Tutorial (TutorialID, TutorialDate, TutorialTime, TutorialDuration, LecturerID, StudentID)
+VALUES (3, '2025-01-20', '10:00:00', 180, 1, 1);
+
+INSERT INTO Tutorial (TutorialID, TutorialDate, TutorialTime, TutorialDuration, LecturerID, StudentID)
+VALUES (4, '2025-01-21', '11:00:00', 180, 2, 1);
+
+-- Q.3.5
+SELECT * FROM Tutorial
+WHERE TutorialDate BETWEEN '2025-01-16' AND '2025-01-20';
+
+-- Q.3.6
+SELECT s.StudentName, s.StudentSurname, COUNT(t.TutorialID) AS TotalTutorials
+FROM Student s
+JOIN Tutorial t ON s.StudentID = t.StudentID
+GROUP BY s.StudentID, s.StudentName, s.StudentSurname
+ORDER BY TotalTutorials DESC;
+
+-- Q.3.7
+CREATE VIEW StudentsWithLecturer2 AS
+SELECT DISTINCT s.StudentName, s.StudentSurname
+FROM Student s
+JOIN Tutorial t ON s.StudentID = t.StudentID
+WHERE t.LecturerID = 2
+ORDER BY s.StudentSurname ASC;
